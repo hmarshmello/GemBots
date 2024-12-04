@@ -1,0 +1,4 @@
+   Flask
+   google-generativeai  # Replace with the actual version
+   Pillow
+   python-dotenv

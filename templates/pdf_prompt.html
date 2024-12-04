@@ -1,0 +1,14 @@
+{% extends "base.html" %}
+{% block content %}
+<h2>PDF Prompt</h2>
+<form method="POST" enctype="multipart/form-data">
+    <label for="pdf">Upload a PDF document:</label><br>
+    <input type="file" id="pdf" name="pdf" accept="application/pdf" required><br><br>
+    <button type="submit">Summarize PDF</button>
+</form>
+{% if generated_text %}
+    <h3>PDF Summary:</h3>
+    <p>{{ generated_text }}</p>
+    <a href="{{ pdf_url }}" target="_blank">View Uploaded PDF</a>
+{% endif %}
+{% endblock %}

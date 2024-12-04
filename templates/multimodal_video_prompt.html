@@ -1,0 +1,17 @@
+{% extends "base.html" %}
+{% block content %}
+<h2>Multimodal Video Prompt</h2>
+<form method="POST" enctype="multipart/form-data">
+    <label for="video">Upload a video file:</label><br>
+    <input type="file" id="video" name="video" accept="video/*" required><br><br>
+    <button type="submit">Describe Video</button>
+</form>
+{% if generated_text %}
+    <h3>Video Description:</h3>
+    <p>{{ generated_text }}</p>
+    <video width="500" controls>
+        <source src="{{ video_url }}" type="video/mp4">
+        Your browser does not support the video tag.
+    </video>
+{% endif %}
+{% endblock %}

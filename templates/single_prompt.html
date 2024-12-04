@@ -1,0 +1,13 @@
+{% extends "base.html" %}
+{% block content %}
+<h2>Single Prompt</h2>
+<form method="POST">
+    <label for="prompt">Enter your prompt:</label><br>
+    <textarea id="prompt" name="prompt" rows="4" cols="50" required>{{ request.form.prompt }}</textarea><br><br>
+    <button type="submit">Generate</button>
+</form>
+{% if generated_text %}
+    <h3>Generated Text:</h3>
+    <p>{{ generated_text }}</p>
+{% endif %}
+{% endblock %}

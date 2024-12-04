@@ -1,0 +1,14 @@
+{% extends "base.html" %}
+{% block content %}
+<h2>Image Text</h2>
+<form method="POST" enctype="multipart/form-data">
+    <label for="image">Upload an image:</label><br>
+    <input type="file" id="image" name="image" accept="image/*" required><br><br>
+    <button type="submit">Generate Description</button>
+</form>
+{% if generated_text %}
+    <h3>Generated Description:</h3>
+    <p>{{ generated_text }}</p>
+    <img src="{{ image_url }}" alt="Uploaded Image" style="max-width: 500px; margin-top: 20px;">
+{% endif %}
+{% endblock %}

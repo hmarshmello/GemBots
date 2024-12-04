@@ -1,0 +1,29 @@
+{% extends "base.html" %}
+{% block content %}
+<div class="card">
+    <div class="card-body">
+        <h2 class="card-title">Interactive Chat</h2>
+        <div class="chat-box mb-3">
+            {% for message in chat_history %}
+                {% if message.role == 'user' %}
+                    <div class="user-message text-end">
+                        <strong>User:</strong> {{ message.message }}
+                    </div>
+                {% elif message.role == 'bot' %}
+                    <div class="bot-message text-start">
+                        <strong>Bot:</strong> {{ message.message }}
+                    </div>
+                {% endif %}
+            {% endfor %}
+        </div>
+        <form method="POST">
+            <div class="mb-3">
+                <label for="message" class="form-label">Your Message:</label>
+                <input type="text" id="message" name="message" class="form-control" required>
+            </div>
+            <button type="submit" class="btn btn-primary">Send</button>
+            <a href="{{ url_for('interactive_chat') }}" class="btn btn-secondary">Reset Chat</a>
+        </form>
+    </div>
+</div>
+{% endblock %}

@@ -2,7 +2,6 @@ import os
 import time
 from flask import Flask, render_template, request, redirect, url_for, flash, session
 from werkzeug.utils import secure_filename
-from flask_session import Session
 import google.generativeai as genai
 from PIL import Image
 from dotenv import load_dotenv

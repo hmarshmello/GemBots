@@ -77,9 +77,7 @@ def image_text():
             file.save(image_path)
             try:
                 organ = Image.open(image_path)
-                response = model.generate_content(
-                    ["Tell me about this instrument", organ]
-                )
+                response = model.generate_content(["Tell me about this picture", organ])
                 generated_text = response.text
                 return render_template(
                     "image_text.html",
@@ -97,7 +95,7 @@ def interactive_chat():
         {"role": "user", "message": "Hello"},
         {
             "role": "bot",
-            "message": "Great to meet you. What would you like to know? Please type 'OK,QUIT' to end the chat.",
+            "message": "Great to meet you. What would you like to know?",
         },
     ]
     if request.method == "GET":
@@ -115,8 +113,7 @@ def interactive_chat():
                         {"role": "user", "parts": "Hello"},
                         {
                             "role": "model",
-                            "parts": "Great to meet you. What would you like to know? "
-                            "IF MENTIONED ANYTHING RELATED TO ENDING THE CHAT THEN RESPONDED WITH 'OK,QUIT' ONLY",
+                            "parts": "Great to meet you. What would you like to know? ",
                         },
                     ]
                 )

@@ -1,0 +1,14 @@
+{
+  "name": "gembots",
+  "version": "1.0.0",
+  "description": "GemBots AI Assistant",
+  "main": "netlify/functions/app.js",
+  "dependencies": {
+    "express": "^4.18.2",
+    "serverless-http": "^3.2.0"
+  },
+  "scripts": {
+    "start": "node netlify/functions/app.js",
+    "build": "npm install"
+  }
+}

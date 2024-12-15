@@ -1,41 +1,80 @@
 <!DOCTYPE html>
-   <html lang="en">
-   <head>
-       <meta charset="UTF-8">
-       <meta name="viewport" content="width=device-width, initial-scale=1.0">
-       <title>Generative AI App</title>
-       <link rel="stylesheet" href="{{ url_for('static', filename='css/styles.css') }}">
-   </head>
-   <body>
-       <header>
-           <h1>Generative AI Accelerators</h1>
-           <nav>
-               <ul>
-                   <li><a href="{{ url_for('index') }}">Home</a></li>
-                   <li><a href="{{ url_for('single_prompt') }}">Single Prompt</a></li>
-                   <li><a href="{{ url_for('image_text') }}">Image Text</a></li>
-                   <li><a href="{{ url_for('interactive_chat') }}">Interactive Chat</a></li>
-                   <li><a href="{{ url_for('multi_image_prompt') }}">Multi-Image Prompt</a></li>
-                   <li><a href="{{ url_for('multimodal_audio') }}">Multimodal Audio</a></li>
-                   <li><a href="{{ url_for('multimodal_video_prompt') }}">Multimodal Video Prompt</a></li>
-                   <li><a href="{{ url_for('pdf_prompt') }}">PDF Prompt</a></li>
-               </ul>
-           </nav>
-       </header>
-       <main>
-           {% with messages = get_flashed_messages() %}
-             {% if messages %}
-               <ul class="flashes">
-                 {% for message in messages %}
-                   <li>{{ message }}</li>
-                 {% endfor %}
-               </ul>
-             {% endif %}
-           {% endwith %}
-           {% block content %}{% endblock %}
-       </main>
-       <footer>
-           <p>&copy; 2023 Generative AI App</p>
-       </footer>
-   </body>
-   </html>
+<html lang="en" data-theme="light">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>GemBots - AI Assistant</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='/css/styles.css') }}">
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+</head>
+<body>
+    <header>
+        <div class="header-content">
+            <h1>GemBots</h1>
+            <div class="theme-toggle">
+                <button id="themeToggle" aria-label="Toggle theme">
+                    <i class="fas fa-sun light-icon"></i>
+                    <i class="fas fa-moon dark-icon"></i>
+                </button>
+            </div>
+        </div>
+        <nav>
+            <ul>
+                <li><a href="{{ url_for('index') }}"><i class="fas fa-home"></i> Home</a></li>
+                <li><a href="{{ url_for('single_prompt') }}"><i class="fas fa-comment"></i> Chat</a></li>
+                <li><a href="{{ url_for('image_text') }}"><i class="fas fa-image"></i> Image Analysis</a></li>
+                <li><a href="{{ url_for('interactive_chat') }}"><i class="fas fa-comments"></i> Interactive Chat</a></li>
+                <li><a href="{{ url_for('multi_image_prompt') }}"><i class="fas fa-images"></i> Multi-Image</a></li>
+                <li><a href="{{ url_for('multimodal_audio') }}"><i class="fas fa-music"></i> Audio Analysis</a></li>
+                <li><a href="{{ url_for('multimodal_video_prompt') }}"><i class="fas fa-video"></i> Video Analysis</a></li>
+                <li><a href="{{ url_for('pdf_prompt') }}"><i class="fas fa-file-pdf"></i> PDF Analysis</a></li>
+            </ul>
+        </nav>
+    </header>
+    <main>
+        {% with messages = get_flashed_messages() %}
+            {% if messages %}
+                <div class="flashes">
+                    {% for message in messages %}
+                        <div class="flash-message">
+                            <i class="fas fa-exclamation-circle"></i>
+                            {{ message }}
+                        </div>
+                    {% endfor %}
+                </div>
+            {% endif %}
+        {% endwith %}
+        {% block content %}{% endblock %}
+    </main>
+    <footer>
+        <p>© 2024 GemBots | Powered by Gemini Pro | Creation of Harsh S.</p>
+    </footer>
+
+    <script>
+        // Theme toggle functionality
+        const themeToggle = document.getElementById('themeToggle');
+        const html = document.documentElement;
+        
+        // Check for saved theme preference, otherwise use system preference
+        const savedTheme = localStorage.getItem('theme') || 
+            (window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light');
+        html.setAttribute('data-theme', savedTheme);
+
+        // Toggle theme
+        themeToggle.addEventListener('click', () => {
+            const currentTheme = html.getAttribute('data-theme');
+            const newTheme = currentTheme === 'light' ? 'dark' : 'light';
+            
+            html.setAttribute('data-theme', newTheme);
+            localStorage.setItem('theme', newTheme);
+        });
+
+        // Auto-scroll chat box to bottom if it exists
+        const chatBox = document.querySelector('.chat-box');
+        if (chatBox) {
+            chatBox.scrollTop = chatBox.scrollHeight;
+        }
+    </script>
+</body>
+</html>

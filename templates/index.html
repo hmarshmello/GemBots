@@ -1,5 +1,180 @@
 {% extends "base.html" %}
-   {% block content %}
-   <h2>Welcome to the Generative AI Use Cases</h2>
-   <p>Select a functionality from the navigation menu to get started.</p>
-   {% endblock %}
+{% block content %}
+<div class="landing-container">
+    <section class="hero">
+        <h1 class="hero-title">Welcome to GemBots</h1>
+        <p class="hero-subtitle">Your AI-Powered Multimodal Assistant</p>
+        <div class="feature-grid">
+            <div class="feature-card">
+                <i class="fas fa-comment-dots"></i>
+                <h3>Smart Chat</h3>
+                <p>Engage in natural conversations with our AI assistant</p>
+            </div>
+            <div class="feature-card">
+                <i class="fas fa-image"></i>
+                <h3>Image Analysis</h3>
+                <p>Get detailed insights from your images</p>
+            </div>
+            <div class="feature-card">
+                <i class="fas fa-headphones"></i>
+                <h3>Audio Processing</h3>
+                <p>Convert speech to text and analyze audio content</p>
+            </div>
+            <div class="feature-card">
+                <i class="fas fa-file-pdf"></i>
+                <h3>Document Analysis</h3>
+                <p>Extract and summarize information from PDFs</p>
+            </div>
+        </div>
+    </section>
+
+    <section class="quick-start">
+        <h2>Get Started</h2>
+        <div class="start-options">
+            <a href="{{ url_for('single_prompt') }}" class="start-card">
+                <i class="fas fa-rocket"></i>
+                <h3>Quick Chat</h3>
+                <p>Start a simple conversation</p>
+            </a>
+            <a href="{{ url_for('interactive_chat') }}" class="start-card">
+                <i class="fas fa-comments"></i>
+                <h3>Interactive Chat</h3>
+                <p>Begin a detailed conversation</p>
+            </a>
+            <a href="{{ url_for('image_text') }}" class="start-card">
+                <i class="fas fa-camera"></i>
+                <h3>Image Analysis</h3>
+                <p>Analyze images instantly</p>
+            </a>
+        </div>
+    </section>
+</div>
+
+<style>
+.landing-container {
+    animation: fadeIn 0.5s ease-out;
+}
+
+.hero {
+    text-align: center;
+    padding: 2rem 0;
+}
+
+.hero-title {
+    font-size: 3rem;
+    font-weight: 700;
+    margin-bottom: 1rem;
+    background: linear-gradient(45deg, var(--accent-color), #9333ea);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+}
+
+.hero-subtitle {
+    font-size: 1.2rem;
+    color: var(--text-secondary);
+    margin-bottom: 3rem;
+}
+
+.feature-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+    gap: 1.5rem;
+    margin-bottom: 3rem;
+}
+
+.feature-card {
+    background: var(--card-bg);
+    padding: 2rem;
+    border-radius: 12px;
+    box-shadow: 0 4px 6px var(--shadow-color);
+    text-align: center;
+    transition: transform 0.3s ease;
+}
+
+.feature-card:hover {
+    transform: translateY(-5px);
+}
+
+.feature-card i {
+    font-size: 2.5rem;
+    color: var(--accent-color);
+    margin-bottom: 1rem;
+}
+
+.feature-card h3 {
+    font-size: 1.2rem;
+    margin-bottom: 0.5rem;
+    color: var(--text-primary);
+}
+
+.feature-card p {
+    color: var(--text-secondary);
+    font-size: 0.9rem;
+}
+
+.quick-start {
+    padding: 2rem 0;
+}
+
+.quick-start h2 {
+    text-align: center;
+    margin-bottom: 2rem;
+    font-size: 2rem;
+    color: var(--text-primary);
+}
+
+.start-options {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+    gap: 1.5rem;
+}
+
+.start-card {
+    background: var(--card-bg);
+    padding: 2rem;
+    border-radius: 12px;
+    box-shadow: 0 4px 6px var(--shadow-color);
+    text-align: center;
+    text-decoration: none;
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+    border: 2px solid transparent;
+}
+
+.start-card:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 6px 12px var(--shadow-color);
+    border-color: var(--accent-color);
+}
+
+.start-card i {
+    font-size: 2rem;
+    color: var(--accent-color);
+    margin-bottom: 1rem;
+}
+
+.start-card h3 {
+    font-size: 1.2rem;
+    margin-bottom: 0.5rem;
+    color: var(--text-primary);
+}
+
+.start-card p {
+    color: var(--text-secondary);
+    font-size: 0.9rem;
+}
+
+@media (max-width: 768px) {
+    .hero-title {
+        font-size: 2rem;
+    }
+
+    .hero-subtitle {
+        font-size: 1rem;
+    }
+
+    .feature-grid, .start-options {
+        grid-template-columns: 1fr;
+    }
+}
+</style>
+{% endblock %}

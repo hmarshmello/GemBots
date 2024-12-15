@@ -1,6 +1,14 @@
 import os
 import time
-from flask import Flask, render_template, request, redirect, url_for, flash, session
+from flask import (
+    Flask,
+    render_template,
+    request,
+    redirect,
+    url_for,
+    flash,
+    session,
+)
 from werkzeug.utils import secure_filename
 import google.generativeai as genai
 from PIL import Image
@@ -10,21 +18,22 @@ import secrets
 # Load environment variables from .env
 load_dotenv()
 
-app = Flask(__name__)
+# Get the parent directory of the api folder
+parent_dir = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+
+app = Flask(
+    __name__,
+    static_folder=os.path.join(parent_dir, "public"),
+    template_folder=os.path.join(parent_dir, "templates"),
+)
 app.secret_key = os.getenv("FLASK_SECRET_KEY", secrets.token_urlsafe(32))
 
-# Configure upload folders
-app.config["UPLOAD_FOLDER_IMAGE"] = "static/uploads/images"
-app.config["UPLOAD_FOLDER_AUDIO"] = "static/uploads/audio"
-app.config["UPLOAD_FOLDER_VIDEO"] = "static/uploads/video"
-app.config["UPLOAD_FOLDER_PDF"] = "static/uploads/pdf"
+# Configure upload folders with absolute paths
+app.config["UPLOAD_FOLDER_IMAGE"] = os.path.join(parent_dir, "public/uploads/images")
+app.config["UPLOAD_FOLDER_AUDIO"] = os.path.join(parent_dir, "public/uploads/audio")
+app.config["UPLOAD_FOLDER_VIDEO"] = os.path.join(parent_dir, "public/uploads/video")
+app.config["UPLOAD_FOLDER_PDF"] = os.path.join(parent_dir, "public/uploads/pdf")
 app.config["MAX_CONTENT_LENGTH"] = 100 * 1024 * 1024  # 100 MB limit
-
-# Ensure upload directories exist
-os.makedirs(app.config["UPLOAD_FOLDER_IMAGE"], exist_ok=True)
-os.makedirs(app.config["UPLOAD_FOLDER_AUDIO"], exist_ok=True)
-os.makedirs(app.config["UPLOAD_FOLDER_VIDEO"], exist_ok=True)
-os.makedirs(app.config["UPLOAD_FOLDER_PDF"], exist_ok=True)
 
 # Configure Google Generative AI
 api_key = os.getenv("GOOGLE_GENERATIVEAI_API_KEY")
@@ -34,12 +43,44 @@ if not api_key:
     )
 
 genai.configure(api_key=api_key)
-model = genai.GenerativeModel("gemini-1.5-flash")
+model = genai.GenerativeModel(
+    "gemini-1.5-pro"
+)  # Using pro model for better chat support
+
+# Ensure upload directories exist
+for folder in [
+    app.config["UPLOAD_FOLDER_IMAGE"],
+    app.config["UPLOAD_FOLDER_AUDIO"],
+    app.config["UPLOAD_FOLDER_VIDEO"],
+    app.config["UPLOAD_FOLDER_PDF"],
+]:
+    os.makedirs(folder, exist_ok=True)
 
 
 @app.route("/")
 def index():
     return render_template("index.html")
+
+
+@app.route("/upload_image", methods=["GET", "POST"])
+def upload_image():
+    if request.method == "POST":
+        if "image" not in request.files:
+            flash("No file part")
+            return redirect(request.url)
+        file = request.files["image"]
+        if file.filename == "":
+            flash("No selected file")
+            return redirect(request.url)
+        if file:
+            filename = secure_filename(file.filename)
+            file_path = os.path.join(app.config["UPLOAD_FOLDER_IMAGE"], filename)
+            file.save(file_path)
+            return render_template(
+                "upload_success.html",
+                image_url=url_for("static", filename=f"uploads/images/{filename}"),
+            )
+    return render_template("upload_image.html")
 
 
 @app.route("/single_prompt", methods=["GET", "POST"])
@@ -75,8 +116,8 @@ def image_text():
             image_path = os.path.join(app.config["UPLOAD_FOLDER_IMAGE"], filename)
             file.save(image_path)
             try:
-                organ = Image.open(image_path)
-                response = model.generate_content(["Tell me about this picture", organ])
+                image = Image.open(image_path)
+                response = model.generate_content(["Tell me about this picture", image])
                 generated_text = response.text
                 return render_template(
                     "image_text.html",
@@ -90,45 +131,47 @@ def image_text():
 
 @app.route("/interactive_chat", methods=["GET", "POST"])
 def interactive_chat():
-    session["chat_history"] = [
-        {"role": "user", "message": "Hello"},
-        {
-            "role": "bot",
-            "message": "Great to meet you. What would you like to know?",
-        },
-    ]
-    if request.method == "GET":
-        # Reset chat history on page load (including refresh
-        x = 0
-    elif request.method == "POST":
-        # Handle user message submission
+    # Initialize chat history only if it doesn't exist
+    if "chat_history" not in session:
+        session["chat_history"] = []
+        # Initialize chat with a welcome message
+        try:
+            chat = model.start_chat(history=[])
+            response = chat.send_message(
+                "You are a helpful AI assistant. Please introduce yourself briefly."
+            )
+            session["chat_history"] = [{"role": "bot", "message": response.text}]
+        except Exception as e:
+            flash(f"Error initializing chat: {str(e)}")
+            return render_template(
+                "interactive_chat.html", chat_history=session.get("chat_history", [])
+            )
+
+    if request.method == "POST":
         user_message = request.form.get("message")
         if user_message:
             try:
-                # Build chat prompt from history
+                # Get the current chat history
+                history = []
+                for msg in session["chat_history"]:
+                    if msg["role"] == "user":
+                        history.append({"role": "user", "parts": [msg["message"]]})
+                    else:
+                        history.append({"role": "model", "parts": [msg["message"]]})
 
-                chat = model.start_chat(
-                    history=[
-                        {"role": "user", "parts": "Hello"},
-                        {
-                            "role": "model",
-                            "parts": "Great to meet you. What would you like to know? ",
-                        },
-                    ]
-                )
-                # Generate response using google.generativeai's generate_chat method
+                # Start new chat with history
+                chat = model.start_chat(history=history)
+
+                # Send new message
                 response = chat.send_message(user_message)
                 bot_message = response.text.strip()
 
-                # Append user and bot messages to chat history
+                # Update chat history
                 session["chat_history"].append(
                     {"role": "user", "message": user_message}
                 )
                 session["chat_history"].append({"role": "bot", "message": bot_message})
-
-                # Check for termination condition
-                if bot_message.upper() == "OK,QUIT":
-                    session.pop("chat_history", None)
+                session.modified = True
 
             except Exception as e:
                 flash(f"Error: {str(e)}")
@@ -136,6 +179,12 @@ def interactive_chat():
     return render_template(
         "interactive_chat.html", chat_history=session.get("chat_history", [])
     )
+
+
+@app.route("/reset_chat")
+def reset_chat():
+    session.pop("chat_history", None)
+    return redirect(url_for("interactive_chat"))
 
 
 @app.route("/multi_image_prompt", methods=["GET", "POST"])
@@ -150,6 +199,7 @@ def multi_image_prompt():
             flash("Please upload at least two images.")
             return redirect(request.url)
         saved_images = []
+        image_urls = []
         try:
             for img in images:
                 if img and img.filename != "":
@@ -157,14 +207,13 @@ def multi_image_prompt():
                     img_path = os.path.join(app.config["UPLOAD_FOLDER_IMAGE"], filename)
                     img.save(img_path)
                     saved_images.append(Image.open(img_path))
+                    image_urls.append(
+                        url_for("static", filename=f"uploads/images/{filename}")
+                    )
+
             response = model.generate_content([user_input] + saved_images)
             generated_text = response.text
-            image_urls = [
-                url_for(
-                    "static", filename=f"uploads/images/{secure_filename(img.filename)}"
-                )
-                for img in images
-            ]
+
             return render_template(
                 "multi_image_prompt.html",
                 generated_text=generated_text,

@@ -47,6 +47,13 @@ model = genai.GenerativeModel(
     "gemini-1.5-pro"
 )  # Using pro model for better chat support
 
+
+# Add health check endpoint
+@app.route("/health")
+def health_check():
+    return {"status": "healthy"}, 200
+
+
 # Ensure upload directories exist
 for folder in [
     app.config["UPLOAD_FOLDER_IMAGE"],
@@ -316,4 +323,12 @@ def pdf_prompt():
 
 
 if __name__ == "__main__":
-    app.run(debug=True)
+    # Get port from environment variable or default to 8000
+    port = int(os.getenv("PORT", 8000))
+
+    # Run the app
+    app.run(
+        host="0.0.0.0",  # Required for Render.com
+        port=port,
+        debug=os.getenv("FLASK_ENV") == "development",
+    )

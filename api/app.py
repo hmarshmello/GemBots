@@ -26,7 +26,7 @@ app = Flask(
     static_folder=os.path.join(parent_dir, "public"),
     template_folder=os.path.join(parent_dir, "templates"),
 )
-app.secret_key = os.getenv("FLASK_SECRET_KEY", secrets.token_urlsafe(32))
+app.secret_key = os.getenv("FLASK_SECRET_KEY")
 
 # Configure upload folders with absolute paths
 app.config["UPLOAD_FOLDER_IMAGE"] = os.path.join(parent_dir, "public/uploads/images")

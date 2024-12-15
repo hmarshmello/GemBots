@@ -1,13 +1,16 @@
 [build]
-  command = "npm install"
+  command = """
+    python -m pip install --upgrade pip &&
+    pip install -r requirements.txt &&
+    npm install
+  """
   functions = "netlify/functions"
   publish = "public"
 
-[dev]
-  command = "npm run dev"
-  port = 8888
-  publish = "public"
-  functions = "netlify/functions"
+[build.environment]
+  PYTHON_VERSION = "3.11.0"
+  NODE_VERSION = "18"
+  PIPENV_VENV_IN_PROJECT = "true"
 
 [[redirects]]
   from = "/*"
@@ -16,3 +19,13 @@
 
 [functions]
   node_bundler = "esbuild"
+  external_node_modules = ["express"]
+
+[context.production]
+  environment = { PYTHON_VERSION = "3.11.0" }
+
+[context.deploy-preview]
+  environment = { PYTHON_VERSION = "3.11.0" }
+
+[context.branch-deploy]
+  environment = { PYTHON_VERSION = "3.11.0" }

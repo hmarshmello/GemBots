@@ -2,13 +2,18 @@
   "name": "gembots",
   "version": "1.0.0",
   "description": "GemBots AI Assistant",
-  "main": "netlify/functions/app.js",
+  "main": "netlify/functions/server.js",
+  "scripts": {
+    "start": "netlify dev",
+    "build": "netlify build",
+    "dev": "netlify dev"
+  },
   "dependencies": {
+    "@netlify/functions": "^2.0.0",
     "express": "^4.18.2",
     "serverless-http": "^3.2.0"
   },
-  "scripts": {
-    "start": "node netlify/functions/app.js",
-    "build": "npm install"
+  "devDependencies": {
+    "netlify-cli": "^17.10.1"
   }
 }

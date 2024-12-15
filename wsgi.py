@@ -1,22 +1,20 @@
 import os
-import sys
+from api import create_app
 
-# Get the absolute path of the project directory
-project_dir = os.path.dirname(os.path.abspath(__file__))
+# Create Flask application with environment-specific config
+# Use FLASK_DEBUG for development mode instead of deprecated FLASK_ENV
+debug_mode = os.getenv("FLASK_DEBUG", "0") == "1"
+environment = "development" if debug_mode else "production"
 
-# Add the project directory to Python path
-sys.path.insert(0, project_dir)
-
-# Import the Flask application
-from api.app import app
+app = create_app(environment)
 
 if __name__ == "__main__":
     # Get port from environment variable or default to 8000
     port = int(os.getenv("PORT", 8000))
-    
+
     # Run the app
     app.run(
-        host="0.0.0.0",
+        host="0.0.0.0",  # Required for Render.com
         port=port,
-        debug=os.getenv("FLASK_ENV") == "development"
+        debug=debug_mode,
     )

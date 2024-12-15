@@ -1,0 +1,163 @@
+{% extends "base.html" %}
+{% block content %}
+<div class="error-container">
+    <div class="error-content">
+        <div class="error-icon">
+            <i class="fas fa-cogs"></i>
+        </div>
+        <h1 class="error-title">500 - Server Error</h1>
+        <p class="error-message">
+            Oops! Something went wrong on our end. 
+            Our team has been notified and we're working to fix it.
+        </p>
+        <div class="error-illustration">
+            <div class="gears">
+                <i class="fas fa-cog gear-1"></i>
+                <i class="fas fa-cog gear-2"></i>
+                <i class="fas fa-cog gear-3"></i>
+            </div>
+        </div>
+        <div class="error-actions">
+            <a href="javascript:history.back()" class="btn btn-secondary">
+                <i class="fas fa-arrow-left"></i>
+                Go Back
+            </a>
+            <a href="{{ url_for('index') }}" class="btn">
+                <i class="fas fa-home"></i>
+                Home
+            </a>
+            <button onclick="location.reload()" class="btn btn-retry">
+                <i class="fas fa-redo"></i>
+                Try Again
+            </button>
+        </div>
+    </div>
+</div>
+
+<style>
+.error-container {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    min-height: 70vh;
+    padding: 2rem;
+}
+
+.error-content {
+    text-align: center;
+    max-width: 600px;
+}
+
+.error-icon {
+    font-size: 4rem;
+    color: #ef4444;
+    margin-bottom: 1.5rem;
+}
+
+.error-title {
+    font-size: 2.5rem;
+    font-weight: 700;
+    margin-bottom: 1rem;
+    color: #ef4444;
+}
+
+.error-message {
+    font-size: 1.1rem;
+    color: var(--text-secondary);
+    margin-bottom: 2rem;
+    line-height: 1.6;
+}
+
+.error-illustration {
+    margin: 3rem 0;
+    position: relative;
+    height: 120px;
+}
+
+.gears {
+    position: relative;
+    display: inline-block;
+}
+
+.gear-1, .gear-2, .gear-3 {
+    font-size: 3rem;
+    position: absolute;
+}
+
+.gear-1 {
+    color: #ef4444;
+    animation: spin 4s linear infinite;
+    left: -40px;
+    top: 0;
+}
+
+.gear-2 {
+    color: var(--accent-color);
+    animation: spin-reverse 4s linear infinite;
+    left: 20px;
+    top: -20px;
+}
+
+.gear-3 {
+    color: #f59e0b;
+    animation: spin 4s linear infinite;
+    left: 80px;
+    top: 0;
+}
+
+.error-actions {
+    display: flex;
+    gap: 1rem;
+    justify-content: center;
+}
+
+.btn-retry {
+    background: linear-gradient(45deg, #10b981, #34d399);
+}
+
+.btn-retry:hover {
+    background: linear-gradient(45deg, #34d399, #10b981);
+}
+
+@keyframes spin {
+    from { transform: rotate(0deg); }
+    to { transform: rotate(360deg); }
+}
+
+@keyframes spin-reverse {
+    from { transform: rotate(360deg); }
+    to { transform: rotate(0deg); }
+}
+
+@media (max-width: 768px) {
+    .error-title {
+        font-size: 2rem;
+    }
+
+    .error-actions {
+        flex-direction: column;
+    }
+
+    .gears {
+        transform: scale(0.8);
+    }
+}
+
+/* Dark mode adjustments */
+[data-theme="dark"] .error-title {
+    color: #f87171;
+}
+
+[data-theme="dark"] .gear-1 {
+    color: #f87171;
+}
+
+[data-theme="dark"] .gear-2 {
+    color: #8b5cf6;
+}
+
+[data-theme="dark"] .gear-3 {
+    color: #fbbf24;
+}
+</style>
+{% endblock %}

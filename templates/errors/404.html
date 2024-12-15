@@ -1,0 +1,141 @@
+{% extends "base.html" %}
+{% block content %}
+<div class="error-container">
+    <div class="error-content">
+        <div class="error-icon">
+            <i class="fas fa-search"></i>
+        </div>
+        <h1 class="error-title">404 - Page Not Found</h1>
+        <p class="error-message">
+            Oops! The page you're looking for doesn't exist. 
+            You might have followed a broken link or typed an incorrect URL.
+        </p>
+        <div class="error-illustration">
+            <div class="robot">
+                <i class="fas fa-robot"></i>
+                <div class="search-animation">
+                    <i class="fas fa-question"></i>
+                    <i class="fas fa-question"></i>
+                    <i class="fas fa-question"></i>
+                </div>
+            </div>
+        </div>
+        <div class="error-actions">
+            <a href="javascript:history.back()" class="btn btn-secondary">
+                <i class="fas fa-arrow-left"></i>
+                Go Back
+            </a>
+            <a href="{{ url_for('index') }}" class="btn">
+                <i class="fas fa-home"></i>
+                Home
+            </a>
+        </div>
+    </div>
+</div>
+
+<style>
+.error-container {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    min-height: 70vh;
+    padding: 2rem;
+}
+
+.error-content {
+    text-align: center;
+    max-width: 600px;
+}
+
+.error-icon {
+    font-size: 4rem;
+    color: var(--accent-color);
+    margin-bottom: 1.5rem;
+    animation: float 3s ease-in-out infinite;
+}
+
+.error-title {
+    font-size: 2.5rem;
+    font-weight: 700;
+    margin-bottom: 1rem;
+    background: linear-gradient(45deg, var(--accent-color), #9333ea);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+}
+
+.error-message {
+    font-size: 1.1rem;
+    color: var(--text-secondary);
+    margin-bottom: 2rem;
+    line-height: 1.6;
+}
+
+.error-illustration {
+    margin: 3rem 0;
+    position: relative;
+}
+
+.robot {
+    font-size: 5rem;
+    color: var(--accent-color);
+    position: relative;
+    display: inline-block;
+}
+
+.search-animation {
+    position: absolute;
+    top: -1rem;
+    right: -2rem;
+    display: flex;
+    gap: 0.5rem;
+}
+
+.search-animation i {
+    font-size: 1.5rem;
+    animation: bounce 1s infinite;
+    color: var(--text-secondary);
+}
+
+.search-animation i:nth-child(2) {
+    animation-delay: 0.2s;
+}
+
+.search-animation i:nth-child(3) {
+    animation-delay: 0.4s;
+}
+
+.error-actions {
+    display: flex;
+    gap: 1rem;
+    justify-content: center;
+}
+
+@keyframes float {
+    0%, 100% { transform: translateY(0); }
+    50% { transform: translateY(-20px); }
+}
+
+@keyframes bounce {
+    0%, 100% { transform: translateY(0); }
+    50% { transform: translateY(-10px); }
+}
+
+@media (max-width: 768px) {
+    .error-title {
+        font-size: 2rem;
+    }
+
+    .error-actions {
+        flex-direction: column;
+    }
+
+    .robot {
+        font-size: 4rem;
+    }
+
+    .search-animation {
+        right: -1rem;
+    }
+}
+</style>
+{% endblock %}

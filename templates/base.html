@@ -1,12 +1,61 @@
 <!DOCTYPE html>
-<html lang="en" data-theme="light">
+<html lang="en" data-theme="{{ session.get('theme', 'light') }}">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>GemBots - AI Assistant</title>
-    <link rel="stylesheet" href="{{ url_for('static', filename='/css/styles.css') }}">
+    <link rel="stylesheet" href="/public/css/styles.css">
     <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <style>
+        /* Inline styles for theme toggle button */
+        .theme-toggle button {
+            position: relative;
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            border: none;
+            background: transparent;
+            cursor: pointer;
+            padding: 0;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: var(--nav-text);
+            transition: background-color 0.3s;
+        }
+
+        .theme-toggle button:hover {
+            background-color: rgba(255, 255, 255, 0.1);
+        }
+
+        .theme-toggle .light-icon,
+        .theme-toggle .dark-icon {
+            position: absolute;
+            font-size: 1.2rem;
+            transition: opacity 0.3s, transform 0.3s;
+        }
+
+        [data-theme="light"] .theme-toggle .light-icon {
+            opacity: 0;
+            transform: rotate(-90deg);
+        }
+
+        [data-theme="light"] .theme-toggle .dark-icon {
+            opacity: 1;
+            transform: rotate(0);
+        }
+
+        [data-theme="dark"] .theme-toggle .light-icon {
+            opacity: 1;
+            transform: rotate(0);
+        }
+
+        [data-theme="dark"] .theme-toggle .dark-icon {
+            opacity: 0;
+            transform: rotate(90deg);
+        }
+    </style>
 </head>
 <body>
     <header>
@@ -48,29 +97,73 @@
         {% block content %}{% endblock %}
     </main>
     <footer>
-        <p>© 2024 GemBots | Powered by Gemini Pro | Creation of Harsh S.</p>
+        <p>© 2024 GemBots | Powered by Gemini Pro</p>
     </footer>
 
     <script>
         // Theme toggle functionality
-        const themeToggle = document.getElementById('themeToggle');
-        const html = document.documentElement;
-        
-        // Check for saved theme preference, otherwise use system preference
-        const savedTheme = localStorage.getItem('theme') || 
-            (window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light');
-        html.setAttribute('data-theme', savedTheme);
-
-        // Toggle theme
-        themeToggle.addEventListener('click', () => {
-            const currentTheme = html.getAttribute('data-theme');
-            const newTheme = currentTheme === 'light' ? 'dark' : 'light';
+        document.addEventListener('DOMContentLoaded', function() {
+            const themeToggle = document.getElementById('themeToggle');
+            const html = document.documentElement;
             
-            html.setAttribute('data-theme', newTheme);
-            localStorage.setItem('theme', newTheme);
+            // Function to update theme
+            async function updateTheme(theme) {
+                try {
+                    const response = await fetch('/toggle-theme', {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json'
+                        },
+                        body: JSON.stringify({ theme: theme })
+                    });
+                    
+                    if (response.ok) {
+                        html.setAttribute('data-theme', theme);
+                        localStorage.setItem('theme', theme);
+                        
+                        // Update icons visibility
+                        const lightIcon = themeToggle.querySelector('.light-icon');
+                        const darkIcon = themeToggle.querySelector('.dark-icon');
+                        
+                        if (theme === 'dark') {
+                            lightIcon.style.opacity = '1';
+                            lightIcon.style.transform = 'rotate(0)';
+                            darkIcon.style.opacity = '0';
+                            darkIcon.style.transform = 'rotate(90deg)';
+                        } else {
+                            lightIcon.style.opacity = '0';
+                            lightIcon.style.transform = 'rotate(-90deg)';
+                            darkIcon.style.opacity = '1';
+                            darkIcon.style.transform = 'rotate(0)';
+                        }
+                    }
+                } catch (error) {
+                    console.error('Error updating theme:', error);
+                }
+            }
+            
+            // Check for saved theme preference or system preference
+            const savedTheme = localStorage.getItem('theme') || 
+                (window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light');
+            
+            // Apply saved theme
+            html.setAttribute('data-theme', savedTheme);
+            
+            // Toggle theme on button click
+            themeToggle.addEventListener('click', () => {
+                const currentTheme = html.getAttribute('data-theme');
+                const newTheme = currentTheme === 'light' ? 'dark' : 'light';
+                updateTheme(newTheme);
+            });
+            
+            // Listen for system theme changes
+            window.matchMedia('(prefers-color-scheme: dark)').addEventListener('change', e => {
+                const newTheme = e.matches ? 'dark' : 'light';
+                updateTheme(newTheme);
+            });
         });
 
-        // Auto-scroll chat box to bottom if it exists
+        // Auto-scroll chat box if it exists
         const chatBox = document.querySelector('.chat-box');
         if (chatBox) {
             chatBox.scrollTop = chatBox.scrollHeight;

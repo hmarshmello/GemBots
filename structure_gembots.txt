@@ -1,44 +1,62 @@
 GemBots/
 │
-├── api/                      # Core application package
-│   ├── __init__.py          # Makes api a proper Python package
-│   └── app.py               # Main Flask application file
+├── api/                      # Application package
+│   ├── __init__.py          # Application factory and initialization
+│   ├── routes.py            # Route handlers and request context
+│   ├── config.py            # Configuration settings
+│   ├── errors.py            # Error handlers and exceptions
+│   ├── ai_handler.py        # Gemini AI operations
+│   ├── file_handler.py      # File operations and validation
+│   └── utils.py             # Utility functions
 │
-├── public/                   # Static files and uploads
+├── public/                   # Static files
 │   ├── css/
-│   │   └── styles.css       # Global CSS styles with dark mode
+│   │   └── styles.css       # Global styles with dark mode
 │   │
 │   └── uploads/             # File upload directories
-│       ├── images/          # For image analysis
-│       ├── audio/           # For audio processing
-│       ├── video/           # For video analysis
-│       └── pdf/             # For PDF processing
-│           
+│       ├── images/          # Image uploads
+│       ├── audio/           # Audio uploads
+│       ├── video/           # Video uploads
+│       └── pdf/             # PDF uploads
+│
 ├── templates/               # Flask HTML templates
-│   ├── base.html           # Base template with navigation
+│   ├── base.html           # Base template with theme toggle
 │   ├── index.html          # Landing page
 │   ├── single_prompt.html  # Single prompt interface
-│   ├── image_text.html     # Image analysis interface
-│   ├── interactive_chat.html # Interactive chat interface
-│   ├── multi_image_prompt.html    # Multiple image analysis
-│   ├── multimodal_audio.html      # Audio analysis interface
-│   ├── multimodal_video_prompt.html # Video analysis interface
-│   └── pdf_prompt.html            # PDF analysis interface
+│   ├── image_text.html     # Image analysis
+│   ├── interactive_chat.html # Interactive chat
+│   ├── multi_image_prompt.html # Multi-image analysis
+│   ├── multimodal_audio.html  # Audio analysis
+│   ├── multimodal_video_prompt.html # Video analysis
+│   ├── pdf_prompt.html     # PDF analysis
+│   │
+│   └── errors/             # Error templates
+│       ├── error.html      # Generic error template
+│       ├── 404.html        # Not found error
+│       └── 500.html        # Server error
 │
-├── .env                    # Environment variables (not in git)
+├── logs/                   # Application logs
+│   ├── info.log           # Info level logs
+│   ├── error.log          # Error level logs
+│   └── werkzeug.log       # Web server logs
+│
+├── .env                    # Environment variables
+├── .env.example           # Example environment configuration
 ├── .gitignore             # Git ignore rules
-├── render.yaml            # Render.com deployment configuration
-├── requirements.txt       # Python dependencies
-├── wsgi.py               # WSGI entry point
-└── structure_gembots.txt # This file - project structure
+├── LICENSE                # MIT License
+├── README.md             # Project documentation
+├── requirements.txt      # Python dependencies
+└── wsgi.py              # WSGI entry point
 
 Key Components:
 
-1. Backend (api/):
-   - Flask application
-   - Route handlers
-   - AI integration
-   - File processing
+1. Core Application (api/):
+   - Application factory (__init__.py)
+   - Route handlers (routes.py)
+   - Configuration (config.py)
+   - Error handling (errors.py)
+   - AI operations (ai_handler.py)
+   - File handling (file_handler.py)
 
 2. Frontend (templates/, public/):
    - HTML templates
@@ -46,13 +64,7 @@ Key Components:
    - Static assets
    - Upload directories
 
-3. Configuration:
-   - render.yaml for deployment
-   - requirements.txt for dependencies
-   - .env for environment variables
-   - wsgi.py for application entry point
-
-4. Features:
+3. Features:
    - Text generation
    - Image analysis
    - Audio processing
@@ -62,12 +74,12 @@ Key Components:
    - File uploads
    - Interactive chat
 
-5. Deployment (Render.com):
-   - Python 3.11 runtime
-   - Gunicorn web server
-   - Auto-deployment
-   - Environment variables
-   - Health checks
+4. Request Flow:
+   - Request received
+   - Context initialized
+   - Handlers created
+   - Operation processed
+   - Response rendered
 
 Development Setup:
 ```bash
@@ -82,17 +94,43 @@ source venv/bin/activate  # or `venv\Scripts\activate` on Windows
 # 3. Install dependencies
 pip install -r requirements.txt
 
-# 4. Set up environment variables in .env
-FLASK_SECRET_KEY=your_secret_key
+# 4. Set up environment variables
+cp .env.example .env
+# Edit .env with your settings:
+FLASK_DEBUG=1  # For development
 GOOGLE_GENERATIVEAI_API_KEY=your_api_key
 
 # 5. Run application
 python wsgi.py
 ```
 
-Production Deployment:
-1. Push to GitHub
-2. Connect to Render.com
-3. Deploy using render.yaml configuration
-4. Set environment variables in Render dashboard
-5. Monitor deployment and logs
+Production Setup:
+```bash
+# 1. Set environment variables
+FLASK_DEBUG=0
+GOOGLE_GENERATIVEAI_API_KEY=your_api_key
+
+# 2. Run with production server
+# Linux/macOS:
+gunicorn wsgi:app
+
+# Windows:
+waitress-serve --port=8000 wsgi:app
+```
+
+Maintenance:
+1. Monitor logs in /logs
+2. Clean upload directories
+3. Update dependencies
+4. Check error reports
+5. Monitor API usage
+
+Development Tips:
+1. Use FLASK_DEBUG=1 for:
+   - Auto-reload
+   - Debug pages
+   - Detailed logs
+2. Check logs for issues
+3. Test file uploads
+4. Monitor API responses
+5. Verify error handling

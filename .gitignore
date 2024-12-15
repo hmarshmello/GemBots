@@ -1,3 +1,9 @@
+# Environment variables
+.env
+.env.local
+.env.*.local
+!.env.example
+
 # Python
 __pycache__/
 *.py[cod]
@@ -20,30 +26,40 @@ wheels/
 *.egg-info/
 .installed.cfg
 *.egg
+.pytest_cache/
 
 # Virtual Environment
 venv/
 ENV/
-
-# Environment Variables
-.env
-.env.local
-.env.*.local
+.venv/
+.env/
 
 # IDE
 .idea/
 .vscode/
 *.swp
 *.swo
+.vs/
+*.sublime-workspace
+*.sublime-project
 
 # OS
 .DS_Store
 Thumbs.db
+*.log
+.directory
 
 # Flask
 instance/
 .webassets-cache
 flask_session/
+
+# Logs
+logs/
+*.log
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
 
 # Uploads
 public/uploads/*
@@ -59,3 +75,22 @@ public/uploads/pdf/*
 !public/uploads/audio/.gitkeep
 !public/uploads/video/.gitkeep
 !public/uploads/pdf/.gitkeep
+
+# Cache
+.cache/
+.npm/
+.yarn/
+
+# Coverage reports
+htmlcov/
+.tox/
+.coverage
+.coverage.*
+.cache
+nosetests.xml
+coverage.xml
+*.cover
+.hypothesis/
+
+# Render specific
+.render-buildpacks/

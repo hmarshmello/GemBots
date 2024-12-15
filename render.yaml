@@ -11,3 +11,9 @@ services:
         value: production
       - key: PORT
         value: 8000
+      - key: PYTHONPATH
+        value: .
+    plan: free
+    branch: main
+    healthCheckPath: /health
+    autoDeploy: true

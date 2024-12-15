@@ -1,0 +1,28 @@
+services:
+  - type: web
+    name: gembots
+    env: python
+    region: oregon
+    buildCommand: pip install -r requirements.txt
+    startCommand: gunicorn api.app:app
+    envVars:
+      - key: PYTHON_VERSION
+        value: 3.11
+      - key: FLASK_SECRET_KEY
+        sync: false
+      - key: GOOGLE_GENERATIVEAI_API_KEY
+        sync: false
+      - key: FLASK_ENV
+        value: production
+    
+    # Specify disk for file uploads
+    disk:
+      name: uploads
+      mountPath: /app/public/uploads
+      sizeGB: 1
+
+    # Health check
+    healthCheckPath: /health
+    
+    # Auto deploy on push
+    autoDeploy: true

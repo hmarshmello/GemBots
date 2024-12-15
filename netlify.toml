@@ -1,16 +1,14 @@
 [build]
-  command = """
-    python -m pip install --upgrade pip &&
-    pip install -r requirements.txt &&
-    npm install
-  """
+  command = "chmod +x build.sh && ./build.sh"
   functions = "netlify/functions"
   publish = "public"
 
 [build.environment]
-  PYTHON_VERSION = "3.11.0"
+  PYTHON_VERSION = "3.11"
   NODE_VERSION = "18"
   PIPENV_VENV_IN_PROJECT = "true"
+  PYTHONUNBUFFERED = "1"
+  LANG = "en_US.UTF-8"
 
 [[redirects]]
   from = "/*"
@@ -21,11 +19,5 @@
   node_bundler = "esbuild"
   external_node_modules = ["express"]
 
-[context.production]
-  environment = { PYTHON_VERSION = "3.11.0" }
-
-[context.deploy-preview]
-  environment = { PYTHON_VERSION = "3.11.0" }
-
-[context.branch-deploy]
-  environment = { PYTHON_VERSION = "3.11.0" }
+[build.processing]
+  skip_processing = false

@@ -1,0 +1,108 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>GemBots - Loading...</title>
+    <link rel="stylesheet" href="/css/styles.css">
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <style>
+        .loading-container {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            min-height: 100vh;
+            background: var(--bg-primary);
+            color: var(--text-primary);
+        }
+
+        .loading-spinner {
+            width: 50px;
+            height: 50px;
+            border: 3px solid var(--accent-color);
+            border-radius: 50%;
+            border-top-color: transparent;
+            animation: spin 1s linear infinite;
+            margin-bottom: 20px;
+        }
+
+        .loading-text {
+            font-size: 1.2rem;
+            font-weight: 500;
+            background: linear-gradient(45deg, var(--accent-color), #9333ea);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        @keyframes spin {
+            to {
+                transform: rotate(360deg);
+            }
+        }
+
+        .error-message {
+            display: none;
+            text-align: center;
+            margin-top: 20px;
+            padding: 20px;
+            border-radius: 8px;
+            background-color: var(--bg-secondary);
+            max-width: 400px;
+        }
+
+        .error-message h3 {
+            color: #ef4444;
+            margin-bottom: 10px;
+        }
+
+        .error-message p {
+            color: var(--text-secondary);
+            margin-bottom: 15px;
+        }
+
+        .retry-button {
+            background: linear-gradient(45deg, var(--accent-color), #9333ea);
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: transform 0.2s;
+        }
+
+        .retry-button:hover {
+            transform: translateY(-2px);
+        }
+    </style>
+</head>
+<body>
+    <div class="loading-container">
+        <div class="loading-spinner"></div>
+        <div class="loading-text">Loading GemBots...</div>
+        <div class="error-message" id="errorMessage">
+            <h3>Connection Error</h3>
+            <p>Unable to connect to the server. Please check your connection and try again.</p>
+            <button class="retry-button" onclick="window.location.reload()">
+                <i class="fas fa-redo"></i> Retry
+            </button>
+        </div>
+    </div>
+
+    <script>
+        // Show error message if loading takes too long
+        setTimeout(() => {
+            const errorMessage = document.getElementById('errorMessage');
+            if (errorMessage) {
+                errorMessage.style.display = 'block';
+            }
+        }, 10000);
+
+        // Check if we're on Netlify and redirect to the proper URL
+        if (window.location.hostname.includes('netlify.app')) {
+            window.location.href = '/.netlify/functions/server';
+        }
+    </script>
+</body>
+</html>

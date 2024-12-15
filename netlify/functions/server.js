@@ -1,67 +1,103 @@
-const { builder } = require("@netlify/functions");
+const express = require('express');
+const serverless = require('serverless-http');
+const { spawn } = require('child_process');
+const path = require('path');
 
-const handler = async (event, context) => {
-  // CORS headers
-  const headers = {
-    'Access-Control-Allow-Origin': '*',
-    'Access-Control-Allow-Headers': 'Content-Type',
-    'Access-Control-Allow-Methods': 'GET, POST, PUT, DELETE'
-  };
+const app = express();
 
-  // Handle OPTIONS request for CORS
-  if (event.httpMethod === 'OPTIONS') {
-    return {
-      statusCode: 204,
-      headers
-    };
-  }
+// Middleware to parse JSON and form data
+app.use(express.json());
+app.use(express.urlencoded({ extended: true }));
 
+// Serve static files
+app.use(express.static('public'));
+
+// Health check endpoint
+app.get('/.netlify/functions/server/health', (req, res) => {
+  res.json({ status: 'healthy' });
+});
+
+// Main handler for all routes
+app.all('*', async (req, res) => {
   try {
-    // Basic routing
-    if (event.path === '/') {
-      return {
-        statusCode: 200,
-        headers: { ...headers, 'Content-Type': 'text/html' },
-        body: `
-          <!DOCTYPE html>
-          <html>
-            <head>
-              <title>GemBots - Redirecting...</title>
-              <meta http-equiv="refresh" content="0;url=https://gembots.vercel.app">
-            </head>
-            <body>
-              <p>Redirecting to main application...</p>
-            </body>
-          </html>
-        `
-      };
+    // Set CORS headers
+    res.set({
+      'Access-Control-Allow-Origin': '*',
+      'Access-Control-Allow-Methods': 'GET, POST, PUT, DELETE, OPTIONS',
+      'Access-Control-Allow-Headers': 'Content-Type',
+    });
+
+    // Handle OPTIONS request
+    if (req.method === 'OPTIONS') {
+      return res.status(200).end();
     }
 
-    // API endpoint for health check
-    if (event.path === '/.netlify/functions/server/health') {
-      return {
-        statusCode: 200,
-        headers: { ...headers, 'Content-Type': 'application/json' },
-        body: JSON.stringify({ status: 'healthy' })
-      };
-    }
+    // Spawn Flask process
+    const flask = spawn('python', ['api/app.py'], {
+      env: {
+        ...process.env,
+        FLASK_APP: 'api/app.py',
+        FLASK_ENV: 'production'
+      }
+    });
 
-    // Default response for unhandled routes
-    return {
-      statusCode: 404,
-      headers,
-      body: JSON.stringify({ message: 'Not Found' })
-    };
+    let responseData = '';
+    let errorData = '';
+
+    flask.stdout.on('data', (data) => {
+      responseData += data.toString();
+    });
+
+    flask.stderr.on('data', (data) => {
+      errorData += data.toString();
+      console.error('Flask error:', data.toString());
+    });
+
+    flask.on('close', (code) => {
+      if (code !== 0) {
+        console.error('Flask process exited with code:', code);
+        console.error('Error output:', errorData);
+        return res.status(500).json({
+          error: 'Internal Server Error',
+          details: errorData
+        });
+      }
+
+      try {
+        // Try to parse response as JSON
+        const jsonResponse = JSON.parse(responseData);
+        res.json(jsonResponse);
+      } catch (e) {
+        // If not JSON, send as HTML
+        res.send(responseData);
+      }
+    });
+
+    // Handle request body if POST
+    if (req.method === 'POST' && req.body) {
+      flask.stdin.write(JSON.stringify(req.body));
+      flask.stdin.end();
+    }
 
   } catch (error) {
-    console.error('Error:', error);
-    return {
-      statusCode: 500,
-      headers,
-      body: JSON.stringify({ message: 'Internal Server Error' })
-    };
+    console.error('Server error:', error);
+    res.status(500).json({
+      error: 'Internal Server Error',
+      details: error.message
+    });
   }
-};
+});
 
-// Export the handler wrapped with builder
-exports.handler = builder(handler);
+// Error handling middleware
+app.use((err, req, res, next) => {
+  console.error(err.stack);
+  res.status(500).json({
+    error: 'Internal Server Error',
+    details: err.message
+  });
+});
+
+// Export the serverless handler
+module.exports.handler = serverless(app, {
+  binary: ['image/*', 'audio/*', 'video/*', 'application/pdf']
+});

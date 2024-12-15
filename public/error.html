@@ -1,0 +1,155 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>GemBots - Error</title>
+    <link rel="stylesheet" href="/css/styles.css">
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <style>
+        .error-container {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            min-height: 100vh;
+            padding: 2rem;
+            text-align: center;
+            background: var(--bg-primary);
+            color: var(--text-primary);
+        }
+
+        .error-icon {
+            font-size: 4rem;
+            color: #ef4444;
+            margin-bottom: 1.5rem;
+            animation: pulse 2s infinite;
+        }
+
+        .error-title {
+            font-size: 2rem;
+            font-weight: 700;
+            margin-bottom: 1rem;
+            background: linear-gradient(45deg, #ef4444, #f87171);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        .error-message {
+            font-size: 1.1rem;
+            color: var(--text-secondary);
+            max-width: 500px;
+            margin-bottom: 2rem;
+        }
+
+        .error-actions {
+            display: flex;
+            gap: 1rem;
+            flex-wrap: wrap;
+            justify-content: center;
+        }
+
+        .error-button {
+            padding: 0.75rem 1.5rem;
+            border-radius: 8px;
+            font-weight: 500;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .retry-button {
+            background: linear-gradient(45deg, var(--accent-color), #9333ea);
+            color: white;
+            border: none;
+        }
+
+        .home-button {
+            background: var(--bg-secondary);
+            color: var(--text-primary);
+            border: 1px solid var(--border-color);
+        }
+
+        .error-button:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 6px var(--shadow-color);
+        }
+
+        @keyframes pulse {
+            0% { transform: scale(1); }
+            50% { transform: scale(1.1); }
+            100% { transform: scale(1); }
+        }
+
+        .technical-details {
+            margin-top: 2rem;
+            padding: 1rem;
+            background: var(--bg-secondary);
+            border-radius: 8px;
+            font-family: monospace;
+            text-align: left;
+            max-width: 600px;
+            width: 100%;
+            display: none;
+        }
+
+        .show-details-button {
+            background: none;
+            border: none;
+            color: var(--text-secondary);
+            cursor: pointer;
+            margin-top: 1rem;
+            font-size: 0.9rem;
+        }
+
+        .show-details-button:hover {
+            color: var(--accent-color);
+        }
+    </style>
+</head>
+<body>
+    <div class="error-container">
+        <i class="fas fa-exclamation-circle error-icon"></i>
+        <h1 class="error-title">Oops! Something went wrong</h1>
+        <p class="error-message">
+            We're having trouble connecting to the server. This might be a temporary issue.
+        </p>
+        <div class="error-actions">
+            <button onclick="window.location.reload()" class="error-button retry-button">
+                <i class="fas fa-redo"></i>
+                Try Again
+            </button>
+            <button onclick="window.location.href='/'" class="error-button home-button">
+                <i class="fas fa-home"></i>
+                Go Home
+            </button>
+        </div>
+        <button onclick="toggleDetails()" class="show-details-button">
+            <i class="fas fa-code"></i>
+            Show Technical Details
+        </button>
+        <div id="technicalDetails" class="technical-details">
+            <pre><code id="errorDetails">No additional details available</code></pre>
+        </div>
+    </div>
+
+    <script>
+        function toggleDetails() {
+            const details = document.getElementById('technicalDetails');
+            details.style.display = details.style.display === 'none' ? 'block' : 'none';
+        }
+
+        // Parse error details from URL if available
+        window.onload = function() {
+            const urlParams = new URLSearchParams(window.location.search);
+            const errorDetails = urlParams.get('error');
+            if (errorDetails) {
+                document.getElementById('errorDetails').textContent = decodeURIComponent(errorDetails);
+            }
+        }
+    </script>
+</body>
+</html>

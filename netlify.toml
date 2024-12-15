@@ -1,23 +1,81 @@
 [build]
-  command = "chmod +x build.sh && ./build.sh"
-  functions = "netlify/functions"
+  base = "/"
   publish = "public"
+  command = """
+    pip install --upgrade pip &&
+    pip install -r requirements.txt &&
+    npm install
+  """
+  functions = "netlify/functions"
 
 [build.environment]
   PYTHON_VERSION = "3.11"
   NODE_VERSION = "18"
   PIPENV_VENV_IN_PROJECT = "true"
   PYTHONUNBUFFERED = "1"
-  LANG = "en_US.UTF-8"
+
+# Primary redirect to the serverless function
+[[redirects]]
+  from = "/api/*"
+  to = "/.netlify/functions/server/:splat"
+  status = 200
+  force = true
+
+# Redirect for the main application
+[[redirects]]
+  from = "/*"
+  to = "/index.html"
+  status = 200
+
+# Error handling
+[[redirects]]
+  from = "/*"
+  to = "/error.html"
+  status = 404
 
 [[redirects]]
   from = "/*"
-  to = "/.netlify/functions/server"
-  status = 200
+  to = "/error.html"
+  status = 500
+
+# Headers for security and CORS
+[[headers]]
+  for = "/*"
+    [headers.values]
+    Access-Control-Allow-Origin = "*"
+    Access-Control-Allow-Methods = "GET, POST, PUT, DELETE, OPTIONS"
+    Access-Control-Allow-Headers = "Content-Type"
+    X-Frame-Options = "DENY"
+    X-XSS-Protection = "1; mode=block"
+    X-Content-Type-Options = "nosniff"
+    Referrer-Policy = "strict-origin-when-cross-origin"
+    Permissions-Policy = "camera=(), microphone=(), geolocation=()"
 
 [functions]
   node_bundler = "esbuild"
   external_node_modules = ["express"]
 
+[dev]
+  framework = "#custom"
+  command = "npm run dev"
+  targetPort = 5000
+  port = 8888
+  publish = "public"
+  autoLaunch = true
+
 [build.processing]
   skip_processing = false
+
+[build.processing.css]
+  bundle = true
+  minify = true
+
+[build.processing.js]
+  bundle = true
+  minify = true
+
+[build.processing.html]
+  pretty_urls = true
+
+[build.processing.images]
+  compress = true

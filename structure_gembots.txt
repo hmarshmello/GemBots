@@ -1,162 +1,98 @@
 GemBots/
 │
-├── api/
-│   └── app.py                 # Main Flask application file with all routes and AI logic
+├── api/                      # Core application package
+│   ├── __init__.py          # Makes api a proper Python package
+│   └── app.py               # Main Flask application file
 │
-├── public/                    # Static files and uploads directory
+├── public/                   # Static files and uploads
 │   ├── css/
-│   │   └── styles.css        # Global CSS styles including dark mode
+│   │   └── styles.css       # Global CSS styles with dark mode
 │   │
-│   └── uploads/              # File upload directories
-│       ├── images/           # For image analysis uploads
-│       │   └── .gitkeep      # Placeholder to maintain directory in git
-│       ├── audio/            # For audio file uploads
-│       │   └── .gitkeep      # Placeholder to maintain directory in git
-│       ├── video/            # For video file uploads
-│       │   └── .gitkeep      # Placeholder to maintain directory in git
-│       └── pdf/              # For PDF document uploads
-│           └── .gitkeep      # Placeholder to maintain directory in git
-│
-├── templates/                 # Flask HTML templates
-│   ├── base.html             # Base template with navigation and theme toggle
-│   ├── index.html            # Landing page with features showcase
-│   ├── single_prompt.html    # Single prompt interface
-│   ├── image_text.html       # Image analysis interface
+│   └── uploads/             # File upload directories
+│       ├── images/          # For image analysis
+│       ├── audio/           # For audio processing
+│       ├── video/           # For video analysis
+│       └── pdf/             # For PDF processing
+│           
+├── templates/               # Flask HTML templates
+│   ├── base.html           # Base template with navigation
+│   ├── index.html          # Landing page
+│   ├── single_prompt.html  # Single prompt interface
+│   ├── image_text.html     # Image analysis interface
 │   ├── interactive_chat.html # Interactive chat interface
 │   ├── multi_image_prompt.html    # Multiple image analysis
 │   ├── multimodal_audio.html      # Audio analysis interface
 │   ├── multimodal_video_prompt.html # Video analysis interface
 │   └── pdf_prompt.html            # PDF analysis interface
 │
-├── netlify/                   # Netlify deployment configuration
-│   └── functions/
-│       └── server.js         # Serverless function for Netlify
-│
-├── .env                      # Environment variables (not in git)
-├── .gitignore               # Git ignore rules
-├── .python-version          # Python version specification (3.11)
-├── build.sh                 # Build script for deployment
-├── setup.sh                 # Script to create directory structure
-├── Dockerfile               # Docker configuration
-├── netlify.toml             # Netlify configuration
-├── package.json             # Node.js dependencies
-├── requirements.txt         # Python dependencies
-├── runtime.txt             # Python runtime specification
-└── structure_gembots.txt   # This file - project structure documentation
+├── .env                    # Environment variables (not in git)
+├── .gitignore             # Git ignore rules
+├── render.yaml            # Render.com deployment configuration
+├── requirements.txt       # Python dependencies
+├── wsgi.py               # WSGI entry point
+└── structure_gembots.txt # This file - project structure
 
-Project Setup:
-1. Initial Setup
-   ```bash
-   # Clone repository
-   git clone <repository-url>
-   cd GemBots
+Key Components:
 
-   # Run setup script
-   chmod +x setup.sh
-   ./setup.sh
+1. Backend (api/):
+   - Flask application
+   - Route handlers
+   - AI integration
+   - File processing
 
-   # Create virtual environment
-   python -m venv venv
-   source venv/bin/activate  # or `venv\Scripts\activate` on Windows
+2. Frontend (templates/, public/):
+   - HTML templates
+   - CSS styles
+   - Static assets
+   - Upload directories
 
-   # Install dependencies
-   pip install -r requirements.txt
-   ```
+3. Configuration:
+   - render.yaml for deployment
+   - requirements.txt for dependencies
+   - .env for environment variables
+   - wsgi.py for application entry point
 
-2. Environment Configuration
-   Create .env file with:
-   ```
-   FLASK_SECRET_KEY=your_secret_key
-   GOOGLE_GENERATIVEAI_API_KEY=your_gemini_api_key
-   ```
+4. Features:
+   - Text generation
+   - Image analysis
+   - Audio processing
+   - Video analysis
+   - PDF processing
+   - Dark/Light theme
+   - File uploads
+   - Interactive chat
 
-3. Run Application
-   ```bash
-   python api/app.py
-   ```
-
-Key Features:
-1. Multi-Modal AI Processing
-   - Text generation with Gemini Pro
-   - Image analysis and generation
-   - Audio transcription and analysis
-   - Video content analysis
-   - PDF document processing
-
-2. Modern UI/UX
-   - Dark/Light theme toggle
-   - Responsive design
-   - Modern animations
-   - Clean interface
-   - Mobile-friendly layout
-
-3. File Handling
-   - Secure file uploads
-   - Multiple file types support
-   - Organized upload directories
-   - Proper file processing
-   - Auto-directory creation
-
-4. Security Features
+5. Deployment (Render.com):
+   - Python 3.11 runtime
+   - Gunicorn web server
+   - Auto-deployment
    - Environment variables
-   - Secure file handling
-   - Session management
-   - Error handling
-   - Upload restrictions
+   - Health checks
 
-Deployment Options:
+Development Setup:
+```bash
+# 1. Clone repository
+git clone <repository-url>
+cd GemBots
 
-1. Render.com (Recommended)
-   - Full Python support
-   - Persistent storage
-   - Easy deployment
-   - Free tier available
+# 2. Create virtual environment
+python -m venv venv
+source venv/bin/activate  # or `venv\Scripts\activate` on Windows
 
-2. Docker
-   ```bash
-   docker build -t gembots .
-   docker run -p 8080:8080 gembots
-   ```
+# 3. Install dependencies
+pip install -r requirements.txt
 
-3. Local Development
-   ```bash
-   python api/app.py
-   ```
+# 4. Set up environment variables in .env
+FLASK_SECRET_KEY=your_secret_key
+GOOGLE_GENERATIVEAI_API_KEY=your_api_key
 
-Dependencies:
-1. Python (3.11)
-   - Flask
-   - google-generativeai
-   - Pillow
-   - python-dotenv
-   - gunicorn
+# 5. Run application
+python wsgi.py
+```
 
-2. Frontend
-   - Modern CSS
-   - Vanilla JavaScript
-   - Font Awesome icons
-   - Inter font family
-
-Directory Permissions:
-- public/uploads/* directories: 755
-- Executable scripts: 755
-- Configuration files: 644
-
-Maintenance:
-1. Regular Updates
-   - Check for dependency updates
-   - Update API versions
-   - Monitor upload directories
-   - Backup configurations
-
-2. Monitoring
-   - Check application logs
-   - Monitor API usage
-   - Track file uploads
-   - Monitor performance
-
-3. Scaling
-   - Implement caching if needed
-   - Optimize file handling
-   - Add database if required
-   - Configure CDN for static files
+Production Deployment:
+1. Push to GitHub
+2. Connect to Render.com
+3. Deploy using render.yaml configuration
+4. Set environment variables in Render dashboard
+5. Monitor deployment and logs

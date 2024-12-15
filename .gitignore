@@ -1,8 +1,3 @@
-# Environment variables
-.env
-.env.local
-.env.*.local
-
 # Python
 __pycache__/
 *.py[cod]
@@ -26,14 +21,14 @@ wheels/
 .installed.cfg
 *.egg
 
-# Flask
-instance/
-.webassets-cache
-flask_session/
-
 # Virtual Environment
 venv/
 ENV/
+
+# Environment Variables
+.env
+.env.local
+.env.*.local
 
 # IDE
 .idea/
@@ -45,7 +40,17 @@ ENV/
 .DS_Store
 Thumbs.db
 
+# Flask
+instance/
+.webassets-cache
+flask_session/
+
 # Uploads
+public/uploads/*
+!public/uploads/images/
+!public/uploads/audio/
+!public/uploads/video/
+!public/uploads/pdf/
 public/uploads/images/*
 public/uploads/audio/*
 public/uploads/video/*
@@ -54,12 +59,3 @@ public/uploads/pdf/*
 !public/uploads/audio/.gitkeep
 !public/uploads/video/.gitkeep
 !public/uploads/pdf/.gitkeep
-
-# Node
-node_modules/
-npm-debug.log*
-yarn-debug.log*
-yarn-error.log*
-
-# Netlify
-.netlify/
